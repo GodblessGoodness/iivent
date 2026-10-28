@@ -86,3 +86,25 @@
 
 ### *What changed & why:*
  By reading the instructor's version I learned that a benchmark is a story about complexity, and every design choice should serve it. Real referenceCode() output means the benchmark measures the actual lookup, not a toy dataset with hidden ordering. The duplicated timing code became a time(label, lookup) helper — same lesson as attempt() in the demo, extract the shape so the two cases can't drift apart, and they end up visually parallel so the O(n) vs O(1) difference is one glance. Math.max(mapMs, 0.001) guards the speedup line against Infinity. Dropped the perf_hooks import (Node has performance globally) and the trailing rhetorical question, since the benchmark itself already makes the point.
+
+
+# AI Interaction Log - Build 2
+ (src/domain/sorting.js, src/domain/inventory.js, src/domain/eventSearch.js, test/build-2.test.js)
+
+### *What I asked:*
+ Implement Build 2 of the Event Ticketing capstone: a pure, stable mergeSort in sorting.js; event publishing and summaries in inventory.js; pure filtering and sorting in eventSearch.js; and comprehensive unit tests covering S02–S06.
+
+### *What came back:*
+ A working implementation with 16 passing tests. mergeSort was stable and immutable, inventory.js enforced INVALID_STATE for tierless events, and eventSearch.js handled filtering and sorting. Problems: all tests were bundled into a single flat build-2.test.js file with no nested suites; tie-breaking was ASCII-sensitive ("Jazz" vs "jazz"); negative maxPriceCents was silently accepted; and sortEvents(summaries) without a second argument threw a VALIDATION error.
+
+### *What changed & why:*
+ Compared against the instructor's reference implementation and fixed four issues:
+
+ Case-insensitive tie-breaking — tieBreak now uses .toLocaleLowerCase() so "Jazz" and "jazz" fall through to id ordering.
+
+ Negative price validation — added a < 0 check so caller bugs throw VALIDATION instead of returning an empty list.
+
+ Default sort key — sortBy = 'date' so sortEvents(summaries) defaults to date order.
+
+ Expanded coverage to 28 passing tests verifying stability, immutability, and error handling.
+
